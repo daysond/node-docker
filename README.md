@@ -253,3 +253,104 @@ mongoose.connect('mongodb://[username]:[password]@mongo:27017/?authSource=admin'
 ### Extra
 
 command to inspect network: ```docker network inspect [container_name]```
+
+
+## Save DB URL as env variable
+
+**Config.js**
+
+```js
+module.exports = {
+    MONGO_IP: process.env.MONGO_IP || "mongo",
+    MONGO_PORT: process.env.MONGO_PORT || 27017,
+    MONGO_USER: process.env.MONGO_USER,
+    MONGO_PASSWORD: process.env.MONGO_PASSWORD
+}
+```
+
+**index.js**
+
+```js
+const { MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT } = require('./config/config');
+// ...
+const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`
+
+mongoose.connect(mongoURL)
+.then(()=> {
+    console.log("Successfully connected to database")
+})
+.catch((e)=>console.log(e))
+```
+
+add env variable to **docker-compost.dev.yml**
+
+```yml
+    environment:
+      # ...
+      - MONGO_USER=dayson
+      - MONGO_PASSWORD=123456
+```
+
+## Add mongo dependency
+
+Ensure that mongo container will start first before the app
+
+```yml
+version: "3"
+services:
+  node-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    depends_on:       # Added dependency, yet doesn't fully resolve the issue. Therefore, extra logic in app is required. eg. keep trying to connect 
+      - mongo
+
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=dayson
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    volumes:
+      - mongo-db:/data/db
+
+volumes:
+  mongo-db:
+```
+
+
+Extra logic in index.js
+
+```js
+const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`
+
+const connectWithRetry = () => {
+    mongoose.connect(mongoURL)
+    .then(()=> {
+        console.log("Successfully connected to database")
+    })
+    .catch((e)=>{
+        console.log(e)
+        // wait 5 sec then retry
+        setTimeout(connectWithRetry, 5000) 
+    })
+}
+
+connectWithRetry()
+
+```
+
+## To test:
+
+1. only start **node-app**, no dependency
+
+``` docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-deps node-app```
+
+2. check the logs, run
+
+ ```docker logs node-docker-node-app-1 -f  ``` 
+
+3. bring up mongo service 
+
+```docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d mongo ```

@@ -1,14 +1,27 @@
 const express = require('express')
 const mongoose = require('mongoose');
+const { MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT } = require('./config/config');
 
 const app = express()
 
-mongoose.connect('mongodb://dayson:123456@mongo:27017/?authSource=admin').then(()=> {
-    console.log("Successfully connected to database")
-}).catch((e)=>console.log(e))
+const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`
+
+const connectWithRetry = () => {
+    mongoose.connect(mongoURL)
+    .then(()=> {
+        console.log("Successfully connected to database")
+    })
+    .catch((e)=>{
+        console.log(e)
+        // wait 5 sec then retry
+        setTimeout(connectWithRetry, 5000) 
+    })
+}
+
+connectWithRetry()
 
 app.get("/" ,(req, res) => {
-    res.send("hi1 world!!!")
+    res.send("hi1 aworld!!!")
 })
 
 
