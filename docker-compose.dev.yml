@@ -12,10 +12,12 @@ services:
       - NODE_ENV=development
       - MONGO_USER=dayson
       - MONGO_PASSWORD=123456
+      - SESSION_SECRET=secret
+      
     command: npm run dev
   mongo:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=dayson
       - MONGO_INITDB_ROOT_PASSWORD=123456
-      
+
       

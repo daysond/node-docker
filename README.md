@@ -145,7 +145,7 @@ Command:
 
     - or ```docker exec -it [container_name] mongosh -u "[username]" -p "[password]"``` in local terminal
 
-- user db: ```use [db_name]```
+- use db: ```use [db_name]```
 
 - show dbs: ```show dbs```
 
@@ -179,6 +179,8 @@ volumes:    # provides volumes to other services
 ```
 
 When tear down the container, use ```docker-compose down``` **without** ```-v```
+
+User ```docker volume prune``` to delete unused volume while containers are **running**
 
 ## Connect DB with Express App
 
@@ -360,3 +362,81 @@ connectWithRetry()
 3. bring up mongo service 
 
 ```docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d mongo ```
+
+<br>
+
+# Redis
+
+## docker-compose.yml: offcial image
+
+```yml
+services:
+  #...
+  redis:
+    image: redis
+```
+
+## config.js
+
+```js
+module.exports = {
+    // ...
+    REDIS_URL: process.env.REDIS_URL || "redis",
+    REDIS_PORT: process.env.REDIS_PORT || 6379,
+    SESSION_SECRET: process.env.SESSION_SECRET
+}
+```
+
+## index.js
+
+```js
+// import
+const session = require("express-session")
+const redis = require('redis')
+const RedisStore = require('connect-redis').default
+const redisClient = redis.createClient({ url: `redis://${REDIS_URL}:${REDIS_PORT}` })
+
+redisClient.connect().catch(console.error)
+
+
+//....
+
+//middleware
+const app = express()
+app.use(session({
+    proxy: true,
+    store: new RedisStore({client: redisClient}),
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        maxAge:30000      // in ms
+    }
+}))
+```
+
+## Log in to redis database
+
+1. Getting into container: ```docker exec -it [redis_container_name] bash```
+
+2. Getting into db: ```redis-cli```
+
+3. Show all keys: ```KEYS *```
+
+4. Get a key: ```GET [KEY]``` e.g ```GET "sess:GGROJbanuhcjqSiw88F2Av77MJ43xU75"```
+
+## Store user
+
+```js
+if(passwordMatched) {
+  req.session.user = user
+  //...
+}
+```
+
+# NGINX Load Balancer
+
+![NGINX architecture](./NGINX_lb.png)
+
