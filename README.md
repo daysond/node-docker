@@ -533,4 +533,9 @@ app.use(cors({ }))
 
 3. Verify: ```docker-compose -v```
 
-## IV. Upload project to github repo
+## IV. Using Git & Github
+
+1. Upload project to github
+
+2. 
+
