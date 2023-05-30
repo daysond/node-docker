@@ -1,5 +1,8 @@
 version: "3"
 services:
+  nginx:
+    ports:
+      - "3000:80"
   node-app:
     build:
       context: .
@@ -13,7 +16,7 @@ services:
       - MONGO_USER=dayson
       - MONGO_PASSWORD=123456
       - SESSION_SECRET=secret
-      
+
     command: npm run dev
   mongo:
     environment:

@@ -440,3 +440,70 @@ if(passwordMatched) {
 
 ![NGINX architecture](./NGINX_lb.png)
 
+## configuration: default.conf
+
+```conf
+
+server {
+    listen 80;
+
+    location /api {
+        proxy_set_header X-real-IP $remote_addr; // make sure the client ip is passed on
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+
+        proxy_pass http://node-app:3000; // proxy_pass http://[service_name]:[port];
+        proxy_redirect off;
+    }
+}
+
+```
+
+## docker-compose files:
+
+default
+
+```yml
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+```
+
+dev:
+
+```yml
+  nginx:
+    ports:
+      - "3000:80"
+```
+
+prod:
+
+```yml
+  nginx:
+    ports:
+      - "80:80"
+```
+
+## scale node container
+
+```docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --scale node-app=[num_of_instances]```
+
+# Cors: allow front end and api running on different domain
+
+1. install: ```npm install cors```
+
+2. index.js: 
+
+```js
+const cors = require("cors")
+
+app.use(cors({
+  
+}))
+```
