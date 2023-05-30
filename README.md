@@ -503,7 +503,34 @@ prod:
 ```js
 const cors = require("cors")
 
-app.use(cors({
-  
-}))
+app.use(cors({ }))
+
 ```
+
+# Deploy docker application:
+
+## I. Create and connect instance
+
+1. create an droplet (vm instance) with the cheapest plan, choose the closest geo-location, enter password
+
+2. after the droplet is up, copy the public ip adress
+
+3. On local machine, open terminal, type in command: ```ssh root@[ip_address]``` to connect to the droplet
+
+## II. [Install docker](https://get.docker.com/)
+
+1. After connecting to the droplet, run ```curl -fsSL https://get.docker.com -o install-docker.sh```, this will download a script file named **install-docker.sh**. Use ```ls``` to verify
+
+2. Install docker by running command ```sh install-docker.sh```
+
+3. Verify installation using ```docker --version```
+
+## III. [Install docker compose](https://docs.docker.com/compose/install/standalone/)
+
+1. Run ```curl -SL https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose```
+
+2. Apply excutable permission to the standalone binary: ```sudo chmod +x /usr/local/bin/docker-compose```
+
+3. Verify: ```docker-compose -v```
+
+## IV. Upload project to github repo
