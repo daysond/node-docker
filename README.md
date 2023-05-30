@@ -596,8 +596,52 @@ a. change **docker-compose.prod.yml**
   git clone [repo_link] .
   ```
 
-  ## VI. Run app with docker-compose-prod.yml
+  ## V. Run app with docker-compose-prod.yml
 
   ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d ```
 
   Test api using postman with url: **[public_ip]/api/v1**
+
+  ## VI. Making changes
+
+  1. Pull changes from github
+
+  2. Run ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --no-deps [service_name]```
+
+  other: force recreate container:
+
+```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate --no-deps [service_name]```  
+
+**However, we should never build images on production server because it takes CPU power and possibly large amount of time**
+
+Current Process: 
+
+    Gitpull -> Docker Compose up --build -> Build Image -> Rebuild node container
+
+Current workflow: (**NOT RECOMMENDED**)
+
+      Development -> Github -> Production Server
+
+New Process:
+
+    Build Image on dev Server -> push built image to dockerhub -> Production Server pull node image
+
+New workflow:
+
+      Development -> Dockerhub -> Production Server
+
+3. Push to dockerhub: 
+
+```docker image tag [image_name] [username]/[repo_name]```
+
+then 
+
+```docker push [username]/[repo_name]```
+
+then in **docker-compose.yml**
+
+```yml
+  [service-name]:
+    build: .
+    image: [username]/[repo_name] # <- add this line
+```
