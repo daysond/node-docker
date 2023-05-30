@@ -714,7 +714,7 @@ docker run -d \
 ```yml
   node-app:
     deploy: # <- add this
-      replicas: 4
+      replicas: 8
       restart_policy:
         condition: any
         max_attempts: 3
@@ -729,3 +729,12 @@ docker run -d \
 4. Bring down the services: ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml down```
 
 5. Run ```docker stack deploy -c docker-compose.yml -c docker-compose.prod.yml [stack_name]```
+
+6. Make changes, build & push image
+
+7. Run ```docker stack deploy -c docker-compose.yml -c docker-compose.prod.yml [stack_name]``` again, you shall see 'Updating service....'
+
+<br />
+<hr />
+
+### END OF NOTE
