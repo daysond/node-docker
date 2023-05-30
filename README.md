@@ -537,5 +537,52 @@ app.use(cors({ }))
 
 1. Upload project to github
 
-2. 
+2. Migrate env_variables to the Ubuntu machine (droplet)
 
+  a. change **docker-compose.prod.yml**
+
+  ```yml
+  version: "3"
+  services:
+    nginx:
+      ports:
+        - "80:80"
+    node-app:
+      build:
+        context: .
+        args:
+          NODE_ENV: production  
+      environment:
+        - NODE_ENV=production
+        - MONGO_USER=${MONGO_USER}
+        - MONGO_PASSWORD=${MONGO_PASSWORD}
+        - SESSION_SECRET=${SESSION_SECRET}
+      command: npm start
+    mongo:
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+        - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+  ```
+
+  b. set up env_variables, in terminal, type ```export [env_var_name]="[env_var_value]"``` for instance: ```export SESSION_SECRET="123"```, run ```printenv``` to verify.
+  However, this will not presist through reboot.
+
+  in root directory, use ```vi .env``` to create a new file, then write:
+
+  ```yml
+  NODE_ENV=production
+  MONGO_USER=[your_value]
+  MONGO_PASSWORD=[your_value]
+  SESSION_SECRET=[your_value]
+  MONGO_INITDB_ROOT_USERNAME=[your_value]
+  MONGO_INITDB_ROOT_PASSWORD=[your_value]
+  ```
+  save and exit file.
+
+  c. run ```ls -la```, you shall see the ```.profile```, open the file with vim ```vi .profile```, add 
+  
+  ```set -o allexport; source /root/.env; set +o allexport;```
+  
+  this will loop through the file and export all the env variables.
+
+  d. ```exit``` the ssh session for the change to take effect. Reconnect to the droplet and use ```printenv``` to verify
