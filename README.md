@@ -1,8 +1,10 @@
 
-# YouTube Video Link: 
+# Docker Tutorial Node
+by Dayson, May 2023
 
-## [Learn Docker - DevOps with Node.js & Express](https://youtu.be/9zUHg7xjIqQ)
+### YouTube Video Link: [Learn Docker - DevOps with Node.js & Express](https://youtu.be/9zUHg7xjIqQ)
 
+<br />
 
 # Express App Container
 
@@ -681,4 +683,43 @@ If you get error message: ***image with reference [username]/[repo] was found bu
 
 2. Pull
 
-    ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --pull d[username]/[repo]```
+    ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --pull [username]/[repo]```
+
+
+# Automation & Watchtower
+
+Idea: whenever we push new image to DockerHub, the production server will be able to detect the change and pull that image automatically and restart the container with the new image.
+
+Links:[Quick Star](https://containrrr.dev/watchtower/), [Watchtower arguments](https://containrrr.dev/watchtower/arguments/)
+
+In production server terminal, run: 
+
+```
+docker run -d \
+  --name watchtower \
+  -e WATCHTOWER_TRACR=true \
+  -e WATCHTOWER_DEBUG=true \
+  -e WATCHTOWER_POLL_INTERVAL=60 \
+  -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower [container_name]
+  ```
+
+# Orchestrator using Docker Swarm
+
+1. initialize Swarm
+
+```docker swarm init --advertise-addr [public_ip]```
+
+2. Update prod.yml
+
+```yml
+  node-app:
+    deploy: # <- add this
+      replicas: 8
+      restart_policy:
+        condition: any
+        max_attempts: 3
+      update_config:
+        parallelism: 2
+        failure_action: rollback
+        delay: 10s
+```
