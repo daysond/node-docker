@@ -12,6 +12,7 @@ services:
     image: daysond/node-app
     environment:
       - PORT=3000
+      - DOCKER_DEFAULT_PLATFORM=linux/amd64
     depends_on:
       - mongo
 
