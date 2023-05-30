@@ -714,7 +714,7 @@ docker run -d \
 ```yml
   node-app:
     deploy: # <- add this
-      replicas: 8
+      replicas: 4
       restart_policy:
         condition: any
         max_attempts: 3
@@ -723,3 +723,9 @@ docker run -d \
         failure_action: rollback
         delay: 10s
 ```
+
+3. Push and pull to update repo on server
+
+4. Bring down the services: ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml down```
+
+5. Run ```docker stack deploy -c docker-compose.yml -c docker-compose.prod.yml [stack_name]```
