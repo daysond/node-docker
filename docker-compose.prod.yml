@@ -5,7 +5,7 @@ services:
       - "80:80"
   node-app:
     deploy:
-      replicas: 8
+      replicas: 4
       restart_policy:
         condition: any
         max_attempts: 3
