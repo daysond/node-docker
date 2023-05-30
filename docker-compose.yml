@@ -7,12 +7,10 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
   node-app:
-    platform: linux/amd64
     build: .
     image: daysond/node-app
     environment:
       - PORT=3000
-      - DOCKER_DEFAULT_PLATFORM=linux/amd64
     depends_on:
       - mongo
 

@@ -662,3 +662,11 @@ add ```[service_name]``` at the end for a specific service
 
 ``` docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull```
 
+
+## NOTE: for Apple Chips:
+
+In docker ***settings***, select ***Features in development***, enable ***Use containerd for pulling and storing images***, then run ```docker buildx build --platform=linux/amd64,linux/arm64 . -t [username]/[repo]``` to build image for multi-platforms. Finally, ```docker push [username]/[repo]``` to push the image. 
+
+or everything in one command: 
+
+```docker buildx build --platform=linux/amd64,linux/arm64 . -t [username]/[repo] --push```
