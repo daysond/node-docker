@@ -707,7 +707,7 @@ docker run -d \
 
 1. initialize Swarm
 
-```docker swarm init --advertise-addr [public_ip]```
+    ```docker swarm init --advertise-addr [public_ip]```
 
 2. Update prod.yml
 
