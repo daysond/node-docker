@@ -665,8 +665,18 @@ add ```[service_name]``` at the end for a specific service
 
 ## NOTE: for Apple Chips:
 
-In docker ***settings***, select ***Features in development***, enable ***Use containerd for pulling and storing images***, then run ```docker buildx build --platform=linux/amd64,linux/arm64 . -t [username]/[repo]``` to build image for multi-platforms. Finally, ```docker push [username]/[repo]``` to push the image. 
+1. Push
 
-or everything in one command: 
+    In docker ***settings***, select ***Features in development***, enable ***Use containerd for pulling and storing images***.
 
-```docker buildx build --platform=linux/amd64,linux/arm64 . -t [username]/[repo] --push```
+    Next, run ```docker buildx build --platform=linux/amd64,linux/arm64 . -t [username]/[repo]``` to build image for multi-platforms. 
+    
+    Finally, ```docker push [username]/[repo]``` to push the image. 
+
+    These command can be combined:
+
+    ```docker buildx build --platform=linux/amd64,linux/arm64 . -t [username]/[repo] --push```
+
+2. Pull
+
+    ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --pull d[username]/[repo]```
