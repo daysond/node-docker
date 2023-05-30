@@ -630,7 +630,7 @@ New workflow:
 
       Development -> Dockerhub -> Production Server
 
-3. Push to dockerhub: 
+3. Push image to dockerhub: 
 
 ```docker image tag [image_name] [username]/[repo_name]```
 
@@ -645,3 +645,20 @@ then in **docker-compose.yml**
     build: .
     image: [username]/[repo_name] # <- add this line
 ```
+
+4. Once changes made:
+
+``` docker-compose -f docker-compose.yml -f docker-compose.prod.yml build```
+
+then push: 
+
+```docker-compose -f docker-compose.yml -f docker-compose.prod.yml push```
+
+or 
+
+add ```[service_name]``` at the end for a specific service
+
+5. Pull changes:
+
+``` docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull```
+
