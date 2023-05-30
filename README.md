@@ -665,7 +665,7 @@ add ```[service_name]``` at the end for a specific service
 
 ## NOTE: for Apple Chips:
 
-If you get error message: image with reference [username]/[repo] was found but does not match the specified platform: wanted linux/amd64, actual: linux/arm64/v8, do the following
+If you get error message: ***image with reference [username]/[repo] was found but does not match the specified platform: wanted linux/amd64, actual: linux/arm64/v8***, do the following
 
 1. Push
 
