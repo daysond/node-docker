@@ -49,8 +49,7 @@ const connectWithRetry = () => {
 connectWithRetry()
 
 app.get("/api/v1" ,(req, res) => {
-    res.send("hi1 aworld!!!")
-    console.log("running......")
+    res.send("Hello production!!!")
 })
 
 

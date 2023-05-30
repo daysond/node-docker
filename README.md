@@ -539,7 +539,7 @@ app.use(cors({ }))
 
 2. Migrate env_variables to the Ubuntu machine (droplet)
 
-  a. change **docker-compose.prod.yml**
+a. change **docker-compose.prod.yml**
 
   ```yml
   version: "3"
@@ -586,3 +586,18 @@ app.use(cors({ }))
   this will loop through the file and export all the env variables.
 
   d. ```exit``` the ssh session for the change to take effect. Reconnect to the droplet and use ```printenv``` to verify
+
+  
+  3. Clone github repo
+
+  ```
+  mkdir app
+  cd app
+  git clone [repo_link] .
+  ```
+
+  ## VI. Run app with docker-compose-prod.yml
+
+  ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d ```
+
+  Test api using postman with url: **[public_ip]/api/v1**
